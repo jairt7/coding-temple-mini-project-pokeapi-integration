@@ -17,7 +17,9 @@ HTML, JavaScript, Bootstrap
 ## Authors
 
 Jared Wilson - main author
+
 Daniel Erazo, Dave Kidd, Katelyn Mehner - some valuable instruction
+
 The Internet - lots of code which was modified for this assignment
 
 ## License
