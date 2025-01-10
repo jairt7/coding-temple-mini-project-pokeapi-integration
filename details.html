@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width-device-width, initial-scale=1.0">
+    <meta name="author" content="Jared Wilson">
+    <title>Pok&eacute;mon API Mini-Project</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</head>
+<body class="d-flex flex-column min-vh-100">
+<header>
+  <div class="position-relative w-100 vh-50 d-flex align-items-center justify-content-center overflow-hidden">
+    <a href="home.html"><img src="resources/pokemon-banner.png" class="img-fluid h-100 object-fit-cover" alt="Background Image"></a>
+    <div class="position-absolute top-0 start-0 w-100 text-center text-white pt-2" style="padding-top:10px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7)">
+      <h1 class="display-4">Pokemon API Mini-Project</h1>
+    </div>
+  </div>
+</header>
+<!-- Credit where credit is due, the Internet helped a lot with this code. Some of it is copied, pasted, and then modified. -->
+<div id="results">
+
+</div>
+
+<script>
+  const queryString = window.location.search.substring(1);
+  const searchQuery = decodeURIComponent(queryString);
+  const pokemonURL = `https://pokeapi.co/api/v2/pokemon/${encodeURIComponent(searchQuery)}`
+  
+  async function fetchData() {
+    const response = await fetch(pokemonURL);
+    const pokemonData = await response.json();
+    console.log(pokemonData);
+    console.log(pokemonData.name);
+
+    const pokemonInfoElement = document.getElementById('results');
+    pokemonInfoElement.innerHTML = `
+    <div class="card" style="width: 800px">
+      <img src="${pokemonData.sprites.front_default}" class="card-img-top" alt="${pokemonData.name}">
+      <div class="card-body">
+        <h2 class="card-title">${pokemonData.name.toUpperCase()}</h2>
+        <h3>Types: ${pokemonData.types.map(typeObj => typeObj.type.name.toUpperCase()).join(', ')}</h3>
+        <h3>Abilities:</h3>
+        <ul class="list-group">
+          ${pokemonData.abilities
+            .map(abilityObj => `<li class="list-group-item" value="${abilityObj.ability.name}">${abilityObj.ability.name}</li>`)
+            .join('')}
+        </ul>
+        <h3>Stats:</h3>
+        <div>
+          ${pokemonData.stats
+            .map(statObj => {
+              const statName = statObj.stat.name.toUpperCase();
+              const baseStat = statObj.base_stat;
+              let barColor = "";
+              if (baseStat <= 50) {
+                barColor = "bg-danger";
+              } else if (baseStat <= 89) {
+                barColor = "bg-warning";
+              } else if (baseStat <= 120) {
+                barColor = "bg-success";
+              } else {
+                barColor = "bg-primary";
+              }
+
+              return `
+                <div class="mb-2">
+                  <strong>${statName}</strong>: ${baseStat}
+                  <div class="progress">
+                    <div class="progress-bar ${barColor}" role="progressbar" style="width: ${(baseStat / 255) * 100}%" aria-valuenow="${baseStat}" aria-valuemin="0" aria-valuemax="255"></div>
+                  </div>
+                </div>
+              `;
+            })
+            .join('')}
+        </div>
+      </div>
+    </div>
+    `;
+}
+
+
+fetchData()
+
+</script>
+
+</div>
+
+<div class="container my-5 mt-auto">
+    <footer class="text-center text-lg-start text-dark" style="background-color: #ECEFF1">
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2)">
+    <p>Open source. No rights reserved.</p>
+    </div>
+  </footer>
+</div>
+</footer>
+</body>
+</html>
